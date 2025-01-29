@@ -143,6 +143,7 @@ function ProductCategory() {
   };
 
   const handleDelete = async (category: Category, e: React.MouseEvent) => {
+    e.preventDefault(); // Add this line
     e.stopPropagation();
     if (!window.confirm('Are you sure you want to delete this category?')) return;
 
@@ -166,6 +167,7 @@ function ProductCategory() {
   };
 
   const handleEdit = (category: Category, e: React.MouseEvent) => {
+    e.preventDefault(); // Add this line
     e.stopPropagation();
     setEditingCategory(category);
   };
@@ -191,7 +193,7 @@ function ProductCategory() {
             <div className="flex-shrink-0 flex items-center">
               <Layout className="h-8 w-8 text-indigo-600 animate-pulse" />
               <span className="ml-2 text-xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 text-transparent bg-clip-text">
-                Mohan India
+                Mohar India
               </span>
             </div>
           </div>
@@ -276,16 +278,16 @@ function ProductCategory() {
                         className="absolute inset-0 w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                      <div className="absolute top-4 right-4 flex space-x-2 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">
+                      <div className="absolute top-4 right-4 flex space-x-2 opacity-100 sm:opacity-0 group-hover:opacity-100 transition-all duration-300">
                         <button
                           onClick={(e) => handleEdit(category, e)}
-                          className="p-2 bg-white rounded-full shadow-lg hover:bg-gray-50 transform hover:scale-110 transition-all duration-200"
+                          className="p-2 bg-white rounded-full shadow-lg hover:bg-gray-50 transform hover:scale-110 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 z-10"
                         >
                           <Pencil className="h-4 w-4 text-gray-700" />
                         </button>
                         <button
                           onClick={(e) => handleDelete(category, e)}
-                          className="p-2 bg-white rounded-full shadow-lg hover:bg-red-50 transform hover:scale-110 transition-all duration-200"
+                          className="p-2 bg-white rounded-full shadow-lg hover:bg-red-50 transform hover:scale-110 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 z-10"
                           disabled={deleting}
                         >
                           <Trash2 className="h-4 w-4 text-red-600" />

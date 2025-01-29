@@ -1,5 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import { PlusCircle, Loader2, ImagePlus, X, ArrowLeft, Pencil, Trash2, Package } from 'lucide-react';
+import React, { useState, useEffect } from "react";
+import {
+  PlusCircle,
+  Loader2,
+  ImagePlus,
+  X,
+  ArrowLeft,
+  Pencil,
+  Trash2,
+  Package,
+} from "lucide-react";
 
 interface Category {
   id: string;
@@ -30,15 +39,15 @@ function Products({ category, onClose }: ProductsProps) {
   const [loading, setLoading] = useState(false);
   const [creating, setCreating] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [previewUrl, setPreviewUrl] = useState<string>('');
+  const [previewUrl, setPreviewUrl] = useState<string>("");
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [deleting, setDeleting] = useState(false);
   const [formData, setFormData] = useState({
-    name: '',
-    description: '',
-    actualPrice: '',
-    discountedPrice: '',
+    name: "",
+    description: "",
+    actualPrice: "",
+    discountedPrice: "",
   });
 
   useEffect(() => {
@@ -61,14 +70,16 @@ function Products({ category, onClose }: ProductsProps) {
   const fetchProducts = async () => {
     setLoading(true);
     try {
-      const response = await fetch('https://mohar-india.vercel.app/api/products');
+      const response = await fetch(
+        "https://mohar-india.vercel.app/api/products"
+      );
       const data = await response.json();
       const categoryProducts = data.filter(
         (product: Product) => product.categoryId === category.id
       );
       setProducts(categoryProducts);
     } catch (error) {
-      console.error('Error fetching products:', error);
+      console.error("Error fetching products:", error);
     } finally {
       setLoading(false);
     }
@@ -88,12 +99,12 @@ function Products({ category, onClose }: ProductsProps) {
 
   const uploadImage = async (file: File) => {
     const formData = new FormData();
-    formData.append('image', file);
+    formData.append("image", file);
 
     const response = await fetch(
-      'https://api.imgbb.com/1/upload?key=841ab1ff4aad5cbad451373e17e9a4ca',
+      "https://api.imgbb.com/1/upload?key=841ab1ff4aad5cbad451373e17e9a4ca",
       {
-        method: 'POST',
+        method: "POST",
         body: formData,
       }
     );
@@ -107,19 +118,19 @@ function Products({ category, onClose }: ProductsProps) {
 
     setCreating(true);
     try {
-      let imageUrl = editingProduct ? editingProduct.imageUrl : '';
+      let imageUrl = editingProduct ? editingProduct.imageUrl : "";
       if (selectedFile) {
         imageUrl = await uploadImage(selectedFile);
       }
-      
+
       const url = editingProduct
         ? `https://mohar-india.vercel.app/api/products/${editingProduct.id}`
-        : 'https://mohar-india.vercel.app/api/products';
+        : "https://mohar-india.vercel.app/api/products";
 
       const response = await fetch(url, {
-        method: editingProduct ? 'PUT' : 'POST',
+        method: editingProduct ? "PUT" : "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           ...formData,
@@ -135,21 +146,22 @@ function Products({ category, onClose }: ProductsProps) {
         fetchProducts();
       }
     } catch (error) {
-      console.error('Error creating/updating product:', error);
+      console.error("Error creating/updating product:", error);
     } finally {
       setCreating(false);
     }
   };
 
   const handleDelete = async (product: Product) => {
-    if (!window.confirm('Are you sure you want to delete this product?')) return;
+    if (!window.confirm("Are you sure you want to delete this product?"))
+      return;
 
     setDeleting(true);
     try {
       const response = await fetch(
         `https://mohar-india.vercel.app/api/products/${product.id}`,
         {
-          method: 'DELETE',
+          method: "DELETE",
         }
       );
 
@@ -157,7 +169,7 @@ function Products({ category, onClose }: ProductsProps) {
         fetchProducts();
       }
     } catch (error) {
-      console.error('Error deleting product:', error);
+      console.error("Error deleting product:", error);
     } finally {
       setDeleting(false);
     }
@@ -165,13 +177,13 @@ function Products({ category, onClose }: ProductsProps) {
 
   const resetForm = () => {
     setFormData({
-      name: '',
-      description: '',
-      actualPrice: '',
-      discountedPrice: '',
+      name: "",
+      description: "",
+      actualPrice: "",
+      discountedPrice: "",
     });
     setSelectedFile(null);
-    setPreviewUrl('');
+    setPreviewUrl("");
     setShowAddDialog(false);
     setEditingProduct(null);
   };
@@ -186,7 +198,9 @@ function Products({ category, onClose }: ProductsProps) {
   };
 
   return (
-    <div className="fixed inset-0 bg-gray-50/95 overflow-y-auto pt-16 sm:pt-20"> {/* Adjusted padding for mobile */}
+    <div className="fixed inset-0 bg-gray-50/95 overflow-y-auto pt-16 sm:pt-20">
+      {" "}
+      {/* Adjusted padding for mobile */}
       <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-8">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6 sm:mb-8">
@@ -202,7 +216,9 @@ function Products({ category, onClose }: ProductsProps) {
                 <Package className="h-6 w-6 sm:h-8 sm:w-8 text-indigo-600 flex-shrink-0" />
                 <span className="truncate">{category.name}</span>
               </h2>
-              <p className="text-sm sm:text-base text-gray-500 mt-0.5 sm:mt-1">Manage products in this category</p>
+              <p className="text-sm sm:text-base text-gray-500 mt-0.5 sm:mt-1">
+                Manage products in this category
+              </p>
             </div>
           </div>
           <button
@@ -224,8 +240,12 @@ function Products({ category, onClose }: ProductsProps) {
           ) : products.length === 0 ? (
             <div className="text-center py-12">
               <Package className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">No products yet</h3>
-              <p className="text-gray-500 mb-4">Get started by adding your first product</p>
+              <h3 className="text-lg font-medium text-gray-900 mb-2">
+                No products yet
+              </h3>
+              <p className="text-gray-500 mb-4">
+                Get started by adding your first product
+              </p>
               <button
                 onClick={() => setShowAddDialog(true)}
                 className="inline-flex items-center px-4 py-2.5 bg-indigo-600 text-white text-sm font-medium rounded-full hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200"
@@ -241,7 +261,7 @@ function Products({ category, onClose }: ProductsProps) {
                   key={product.id}
                   className="group relative bg-white border border-gray-100 rounded-2xl overflow-hidden hover:shadow-lg transition-shadow duration-200"
                 >
-                  <div className="relative pt-[75%] sm:pt-[100%]"> {/* Adjusted aspect ratio for mobile */}
+                  <div className="relative pt-[75%] sm:pt-[100%]">
                     <img
                       src={product.imageUrl}
                       alt={product.name}
@@ -249,9 +269,16 @@ function Products({ category, onClose }: ProductsProps) {
                     />
                   </div>
                   {/* Discount Badge */}
-                  {calculateDiscount(product.actualPrice, product.discountedPrice) > 0 && (
+                  {calculateDiscount(
+                    product.actualPrice,
+                    product.discountedPrice
+                  ) > 0 && (
                     <div className="absolute top-3 sm:top-4 left-3 sm:left-4 bg-green-500 text-white px-2.5 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-medium shadow-lg">
-                      {calculateDiscount(product.actualPrice, product.discountedPrice)}% OFF
+                      {calculateDiscount(
+                        product.actualPrice,
+                        product.discountedPrice
+                      )}
+                      % OFF
                     </div>
                   )}
                   <div className="p-4 sm:p-6">
@@ -272,18 +299,26 @@ function Products({ category, onClose }: ProductsProps) {
                       )}
                     </div>
                   </div>
-                  {/* Action Buttons */}
-                  <div className="absolute top-3 sm:top-4 right-3 sm:right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                  {/* Action Buttons - Updated for better visibility and interaction */}
+                  <div className="absolute top-3 sm:top-4 right-3 sm:right-4 flex gap-2 opacity-100 sm:opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10">
                     <button
-                      onClick={() => setEditingProduct(product)}
-                      className="p-1.5 sm:p-2 bg-white rounded-full shadow-lg hover:bg-gray-50 transition-colors duration-200"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setEditingProduct(product);
+                      }}
+                      className="p-1.5 sm:p-2 bg-white rounded-full shadow-lg hover:bg-gray-50 transform hover:scale-110 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                       title="Edit product"
                     >
                       <Pencil className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-gray-600" />
                     </button>
                     <button
-                      onClick={() => handleDelete(product)}
-                      className="p-1.5 sm:p-2 bg-white rounded-full shadow-lg hover:bg-red-50 transition-colors duration-200"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        handleDelete(product);
+                      }}
+                      className="p-1.5 sm:p-2 bg-white rounded-full shadow-lg hover:bg-red-50 transform hover:scale-110 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
                       disabled={deleting}
                       title="Delete product"
                     >
@@ -298,7 +333,10 @@ function Products({ category, onClose }: ProductsProps) {
 
         {/* Add/Edit Product Dialog */}
         {showAddDialog && (
-          <div className="fixed inset-0 bg-black/60 flex items-center justify-center p-3 sm:p-4" style={{ zIndex: 100 }}>
+          <div
+            className="fixed inset-0 bg-black/60 flex items-center justify-center p-3 sm:p-4"
+            style={{ zIndex: 100 }}
+          >
             <div className="bg-white rounded-2xl w-full max-w-md max-h-[90vh] overflow-y-auto">
               <div className="p-4 sm:p-6">
                 <div className="flex justify-between items-center mb-5 sm:mb-6">
@@ -323,7 +361,10 @@ function Products({ category, onClose }: ProductsProps) {
                   </button>
                 </div>
 
-                <form onSubmit={handleSubmit} className="space-y-5 sm:space-y-6">
+                <form
+                  onSubmit={handleSubmit}
+                  className="space-y-5 sm:space-y-6"
+                >
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Product Image
@@ -344,7 +385,7 @@ function Products({ category, onClose }: ProductsProps) {
                       )}
                       <label className="w-full sm:w-auto flex-shrink-0 cursor-pointer">
                         <span className="inline-flex items-center justify-center w-full sm:w-auto px-4 py-2.5 border border-gray-300 rounded-full text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200">
-                          {previewUrl ? 'Change Image' : 'Upload Image'}
+                          {previewUrl ? "Change Image" : "Upload Image"}
                         </span>
                         <input
                           type="file"
@@ -379,7 +420,10 @@ function Products({ category, onClose }: ProductsProps) {
                       type="text"
                       value={formData.description}
                       onChange={(e) =>
-                        setFormData({ ...formData, description: e.target.value })
+                        setFormData({
+                          ...formData,
+                          description: e.target.value,
+                        })
                       }
                       className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors duration-200"
                       placeholder="Enter product description"
@@ -392,12 +436,17 @@ function Products({ category, onClose }: ProductsProps) {
                         Actual Price
                       </label>
                       <div className="relative">
-                        <span className="absolute left-3 top-2.5 text-gray-500">₹</span>
+                        <span className="absolute left-3 top-2.5 text-gray-500">
+                          ₹
+                        </span>
                         <input
                           type="number"
                           value={formData.actualPrice}
                           onChange={(e) =>
-                            setFormData({ ...formData, actualPrice: e.target.value })
+                            setFormData({
+                              ...formData,
+                              actualPrice: e.target.value,
+                            })
                           }
                           className="w-full pl-8 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors duration-200"
                           placeholder="0"
@@ -410,12 +459,17 @@ function Products({ category, onClose }: ProductsProps) {
                         Discounted Price
                       </label>
                       <div className="relative">
-                        <span className="absolute left-3 top-2.5 text-gray-500">₹</span>
+                        <span className="absolute left-3 top-2.5 text-gray-500">
+                          ₹
+                        </span>
                         <input
                           type="number"
                           value={formData.discountedPrice}
                           onChange={(e) =>
-                            setFormData({ ...formData, discountedPrice: e.target.value })
+                            setFormData({
+                              ...formData,
+                              discountedPrice: e.target.value,
+                            })
                           }
                           className="w-full pl-8 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors duration-200"
                           placeholder="0"
@@ -434,16 +488,22 @@ function Products({ category, onClose }: ProductsProps) {
                     </button>
                     <button
                       type="submit"
-                      disabled={creating || !formData.name || (!selectedFile && !editingProduct)}
+                      disabled={
+                        creating ||
+                        !formData.name ||
+                        (!selectedFile && !editingProduct)
+                      }
                       className="w-full sm:w-auto inline-flex items-center justify-center px-4 py-2.5 border border-transparent text-sm font-medium rounded-lg text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
                     >
                       {creating ? (
                         <>
                           <Loader2 className="animate-spin -ml-1 mr-2 h-4 w-4" />
-                          {editingProduct ? 'Updating...' : 'Creating...'}
+                          {editingProduct ? "Updating..." : "Creating..."}
                         </>
+                      ) : editingProduct ? (
+                        "Update Product"
                       ) : (
-                        editingProduct ? 'Update Product' : 'Create Product'
+                        "Create Product"
                       )}
                     </button>
                   </div>
