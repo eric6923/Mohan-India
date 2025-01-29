@@ -50,6 +50,21 @@ function Products({ category, onClose }: ProductsProps) {
     discountedPrice: "",
   });
 
+  // Reset all states when dialog is closed
+  const resetForm = () => {
+    setFormData({
+      name: "",
+      description: "",
+      actualPrice: "",
+      discountedPrice: "",
+    });
+    setSelectedFile(null);
+    setPreviewUrl("");
+    setShowAddDialog(false);
+    setEditingProduct(null);
+    setCreating(false); // Reset creating state
+  };
+
   useEffect(() => {
     fetchProducts();
   }, [category.id]);
@@ -64,6 +79,15 @@ function Products({ category, onClose }: ProductsProps) {
       });
       setPreviewUrl(editingProduct.imageUrl);
       setShowAddDialog(true);
+    } else {
+      // Reset form when editing product is cleared
+      setFormData({
+        name: "",
+        description: "",
+        actualPrice: "",
+        discountedPrice: "",
+      });
+      setPreviewUrl("");
     }
   }, [editingProduct]);
 
@@ -73,6 +97,9 @@ function Products({ category, onClose }: ProductsProps) {
       const response = await fetch(
         "https://mohar-india.vercel.app/api/products"
       );
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
       const data = await response.json();
       const categoryProducts = data.filter(
         (product: Product) => product.categoryId === category.id
@@ -101,15 +128,23 @@ function Products({ category, onClose }: ProductsProps) {
     const formData = new FormData();
     formData.append("image", file);
 
-    const response = await fetch(
-      "https://api.imgbb.com/1/upload?key=841ab1ff4aad5cbad451373e17e9a4ca",
-      {
-        method: "POST",
-        body: formData,
+    try {
+      const response = await fetch(
+        "https://api.imgbb.com/1/upload?key=841ab1ff4aad5cbad451373e17e9a4ca",
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
-    );
-    const data = await response.json();
-    return data.data.url;
+      const data = await response.json();
+      return data.data.url;
+    } catch (error) {
+      console.error("Error uploading image:", error);
+      throw error;
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -141,20 +176,22 @@ function Products({ category, onClose }: ProductsProps) {
         }),
       });
 
-      if (response.ok) {
-        resetForm();
-        fetchProducts();
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
+
+      await fetchProducts(); // Refresh products list
+      resetForm(); // Reset form and close dialog
     } catch (error) {
       console.error("Error creating/updating product:", error);
+      alert("Failed to save product. Please try again."); // Add user feedback
     } finally {
       setCreating(false);
     }
   };
 
   const handleDelete = async (product: Product) => {
-    if (!window.confirm("Are you sure you want to delete this product?"))
-      return;
+    if (!window.confirm("Are you sure you want to delete this product?")) return;
 
     setDeleting(true);
     try {
@@ -165,27 +202,17 @@ function Products({ category, onClose }: ProductsProps) {
         }
       );
 
-      if (response.ok) {
-        fetchProducts();
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
+
+      await fetchProducts(); // Refresh products list
     } catch (error) {
       console.error("Error deleting product:", error);
+      alert("Failed to delete product. Please try again."); // Add user feedback
     } finally {
       setDeleting(false);
     }
-  };
-
-  const resetForm = () => {
-    setFormData({
-      name: "",
-      description: "",
-      actualPrice: "",
-      discountedPrice: "",
-    });
-    setSelectedFile(null);
-    setPreviewUrl("");
-    setShowAddDialog(false);
-    setEditingProduct(null);
   };
 
   const calculateDiscount = (actual: string, discounted: string) => {
