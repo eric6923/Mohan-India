@@ -1,7 +1,8 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import Login from './components/Login';
-import ProtectedRoute from './components/ProtectedRoute';
-import ProductCategory from './components/ProductCategory';
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Login from "./components/Login";
+import ProtectedRoute from "./components/ProtectedRoute";
+import ProductCategory from "./components/ProductCategory";
+import UserHome from "./components/UserHome";
 
 const App = () => {
   return (
@@ -9,13 +10,14 @@ const App = () => {
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route
-          path="/"
+          path="/admin"
           element={
             <ProtectedRoute>
               <ProductCategory />
             </ProtectedRoute>
           }
         />
+        <Route path="/" element={<UserHome />} />
       </Routes>
     </BrowserRouter>
   );
