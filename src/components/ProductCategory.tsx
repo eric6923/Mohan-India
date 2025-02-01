@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { PlusCircle, Loader2, ImagePlus, X, Pencil, Trash2, Layout, Search, Filter, ChevronDown } from 'lucide-react';
+import { PlusCircle, Loader2, ImagePlus, X, Pencil, Trash2, Layout, Search } from 'lucide-react';
 import Products from './Products';
 
 interface Category {
@@ -225,20 +225,13 @@ function ProductCategory() {
                   className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm transition-all duration-200 ease-in-out"
                 />
               </div>
-              <div className="flex space-x-3">
-                <button className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-200">
-                  <Filter className="h-5 w-5 mr-2 text-gray-400" />
-                  Filters
-                  <ChevronDown className="ml-2 h-5 w-5 text-gray-400" />
-                </button>
-                <button
-                  onClick={() => setShowDialog(true)}
-                  className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-200"
-                >
-                  <PlusCircle className="h-5 w-5 mr-2" />
-                  Add Category
-                </button>
-              </div>
+              <button
+                onClick={() => setShowDialog(true)}
+                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-200"
+              >
+                <PlusCircle className="h-5 w-5 mr-2" />
+                Add Category
+              </button>
             </div>
           </div>
         </div>

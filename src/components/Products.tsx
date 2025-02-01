@@ -8,6 +8,7 @@ import {
   Pencil,
   Trash2,
   Package,
+  Search,
 } from "lucide-react";
 
 interface Category {
@@ -36,6 +37,7 @@ interface ProductsProps {
 
 function Products({ category, onClose }: ProductsProps) {
   const [products, setProducts] = useState<Product[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(false);
   const [creating, setCreating] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -49,6 +51,11 @@ function Products({ category, onClose }: ProductsProps) {
     actualPrice: "",
     discountedPrice: "",
   });
+
+  const filteredProducts = products.filter(product => 
+    product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    product.description.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   // Reset all states when dialog is closed
   const resetForm = () => {
@@ -226,8 +233,6 @@ function Products({ category, onClose }: ProductsProps) {
 
   return (
     <div className="fixed inset-0 bg-gray-50/95 overflow-y-auto pt-16 sm:pt-20">
-      {" "}
-      {/* Adjusted padding for mobile */}
       <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-8">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6 sm:mb-8">
@@ -248,13 +253,25 @@ function Products({ category, onClose }: ProductsProps) {
               </p>
             </div>
           </div>
-          <button
-            onClick={() => setShowAddDialog(true)}
-            className="inline-flex items-center justify-center w-full sm:w-auto px-4 py-2.5 bg-indigo-600 text-white text-sm font-medium rounded-full hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200"
-          >
-            <PlusCircle className="h-5 w-5 mr-2" />
-            Add Product
-          </button>
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 w-full sm:w-auto">
+            <div className="relative flex-grow sm:flex-grow-0 sm:w-64">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Search products..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-10 pr-4 py-2.5 bg-white border border-gray-300 rounded-full focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors duration-200"
+              />
+            </div>
+            <button
+              onClick={() => setShowAddDialog(true)}
+              className="inline-flex items-center justify-center px-4 py-2.5 bg-indigo-600 text-white text-sm font-medium rounded-full hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200"
+            >
+              <PlusCircle className="h-5 w-5 mr-2" />
+              Add Product
+            </button>
+          </div>
         </div>
 
         {/* Products Grid */}
@@ -264,26 +281,30 @@ function Products({ category, onClose }: ProductsProps) {
               <Loader2 className="animate-spin h-10 w-10 text-indigo-600 mb-4" />
               <p className="text-gray-500">Loading products...</p>
             </div>
-          ) : products.length === 0 ? (
+          ) : filteredProducts.length === 0 ? (
             <div className="text-center py-12">
               <Package className="h-12 w-12 text-gray-400 mx-auto mb-4" />
               <h3 className="text-lg font-medium text-gray-900 mb-2">
-                No products yet
+                {searchQuery ? "No products found" : "No products yet"}
               </h3>
               <p className="text-gray-500 mb-4">
-                Get started by adding your first product
+                {searchQuery
+                  ? "Try adjusting your search terms"
+                  : "Get started by adding your first product"}
               </p>
-              <button
-                onClick={() => setShowAddDialog(true)}
-                className="inline-flex items-center px-4 py-2.5 bg-indigo-600 text-white text-sm font-medium rounded-full hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200"
-              >
-                <PlusCircle className="h-5 w-5 mr-2" />
-                Add Product
-              </button>
+              {!searchQuery && (
+                <button
+                  onClick={() => setShowAddDialog(true)}
+                  className="inline-flex items-center px-4 py-2.5 bg-indigo-600 text-white text-sm font-medium rounded-full hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200"
+                >
+                  <PlusCircle className="h-5 w-5 mr-2" />
+                  Add Product
+                </button>
+              )}
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
-              {products.map((product) => (
+              {filteredProducts.map((product) => (
                 <div
                   key={product.id}
                   className="group relative bg-white border border-gray-100 rounded-2xl overflow-hidden hover:shadow-lg transition-shadow duration-200"
@@ -326,7 +347,7 @@ function Products({ category, onClose }: ProductsProps) {
                       )}
                     </div>
                   </div>
-                  {/* Action Buttons - Updated for better visibility and interaction */}
+                  {/* Action Buttons */}
                   <div className="absolute top-3 sm:top-4 right-3 sm:right-4 flex gap-2 opacity-100 sm:opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10">
                     <button
                       onClick={(e) => {
@@ -388,10 +409,7 @@ function Products({ category, onClose }: ProductsProps) {
                   </button>
                 </div>
 
-                <form
-                  onSubmit={handleSubmit}
-                  className="space-y-5 sm:space-y-6"
-                >
+                <form onSubmit={handleSubmit} className="space-y-5 sm:space-y-6">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Product Image
