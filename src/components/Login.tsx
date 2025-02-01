@@ -8,7 +8,7 @@ const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleSubmit = async (e:any) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
     setError('');
@@ -25,13 +25,16 @@ const Login = () => {
       const data = await response.json();
 
       if (response.ok) {
+        // Store the token
         localStorage.setItem('token', data.token);
-        navigate('/');
+        // Redirect to admin route instead of root
+        navigate('/admin');
       } else {
-        setError(data.message || 'Login failed');
+        setError(data.message || 'Invalid email or password');
       }
     } catch (err) {
       setError('Something went wrong. Please try again.');
+      console.error('Login error:', err);
     } finally {
       setIsLoading(false);
     }
