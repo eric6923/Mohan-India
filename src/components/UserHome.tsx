@@ -114,9 +114,9 @@ function ProductCategory() {
                     <h3 className="text-lg font-semibold text-gray-900 group-hover:text-indigo-600 transition-colors duration-200">
                       {category.name}
                     </h3>
-                    <p className="mt-2 text-sm text-gray-500">
+                    {/* <p className="mt-2 text-sm text-gray-500">
                       Added on {new Date(category.createdAt).toLocaleDateString()}
-                    </p>
+                    </p> */}
                   </div>
                 </div>
               ))}

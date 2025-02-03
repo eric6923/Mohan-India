@@ -4,6 +4,7 @@ import {
   ArrowLeft,
   Package,
   Search,
+  MessageSquare
 } from "lucide-react";
 
 interface Category {
@@ -74,6 +75,12 @@ function Products({ category, onClose }: ProductsProps) {
     return 0;
   };
 
+  const handleWhatsAppOrder = (productName: string) => {
+    const message = encodeURIComponent(`I would like to order ${productName}`);
+    const whatsappUrl = `https://wa.me/919382884078?text=${message}`;
+    window.open(whatsappUrl, '_blank');
+  };
+
   return (
     <div className="fixed inset-0 bg-gray-50/95 overflow-y-auto pt-16 sm:pt-20">
       <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-8">
@@ -92,7 +99,7 @@ function Products({ category, onClose }: ProductsProps) {
                 <span className="truncate">{category.name}</span>
               </h2>
               <p className="text-sm sm:text-base text-gray-500 mt-0.5 sm:mt-1">
-                Manage products in this category
+                Browse our collection of products
               </p>
             </div>
           </div>
@@ -130,48 +137,64 @@ function Products({ category, onClose }: ProductsProps) {
               </p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
               {filteredProducts.map((product) => (
                 <div
                   key={product.id}
-                  className="group relative bg-white border border-gray-100 rounded-2xl overflow-hidden hover:shadow-lg transition-shadow duration-200"
+                  className="group bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col"
                 >
-                  <div className="relative pt-[75%] sm:pt-[80%]">
+                  {/* Image Container */}
+                  <div className="relative pt-[100%] overflow-hidden bg-gray-100">
                     <img
                       src={product.imageUrl}
                       alt={product.name}
-                      className="absolute inset-0 w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-200"
+                      className="absolute inset-0 w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-300"
                     />
+                    {/* Discount Badge */}
+                    {calculateDiscount(
+                      product.actualPrice,
+                      product.discountedPrice
+                    ) > 0 && (
+                      <div className="absolute top-2 left-2 bg-red-500 text-white px-2 py-1 rounded-full text-xs font-medium shadow-lg">
+                        {calculateDiscount(
+                          product.actualPrice,
+                          product.discountedPrice
+                        )}
+                        % OFF
+                      </div>
+                    )}
                   </div>
-                  {/* Discount Badge */}
-                  {calculateDiscount(
-                    product.actualPrice,
-                    product.discountedPrice
-                  ) > 0 && (
-                    <div className="absolute top-3 sm:top-4 left-3 sm:left-4 bg-green-500 text-white px-2.5 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-medium shadow-lg">
-                      {calculateDiscount(
-                        product.actualPrice,
-                        product.discountedPrice
-                      )}
-                      % OFF
-                    </div>
-                  )}
-                  <div className="p-4 sm:p-6">
-                    <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-1.5 sm:mb-2 line-clamp-1">
+
+                  {/* Content Container */}
+                  <div className="p-3 sm:p-4 flex flex-col flex-grow">
+                    <h3 className="text-sm sm:text-base font-medium text-gray-900 mb-1 line-clamp-2 min-h-[2.5rem]">
                       {product.name}
                     </h3>
-                    <p className="text-sm text-gray-500 mb-3 sm:mb-4 line-clamp-2 min-h-[2.5rem]">
+                    <p className="text-xs sm:text-sm text-gray-500 mb-2 line-clamp-2 flex-grow">
                       {product.description}
                     </p>
-                    <div className="flex items-baseline gap-2 sm:gap-3">
-                      <span className="text-xl sm:text-2xl font-bold text-indigo-600">
-                        ₹{product.discountedPrice}
-                      </span>
-                      {product.actualPrice !== product.discountedPrice && (
-                        <span className="text-xs sm:text-sm text-gray-500 line-through">
-                          ₹{product.actualPrice}
+                    
+                    {/* Price Container */}
+                    <div className="mt-auto">
+                      <div className="flex items-baseline gap-1.5 mb-3">
+                        <span className="text-lg sm:text-xl font-bold text-green-600">
+                          ₹{product.discountedPrice}
                         </span>
-                      )}
+                        {product.actualPrice !== product.discountedPrice && (
+                          <span className="text-xs text-gray-500 line-through">
+                            ₹{product.actualPrice}
+                          </span>
+                        )}
+                      </div>
+                      
+                      {/* WhatsApp Order Button */}
+                      <button
+                        onClick={() => handleWhatsAppOrder(product.name)}
+                        className="w-full flex items-center justify-center gap-1.5 bg-green-500 hover:bg-green-600 text-white py-2 px-3 rounded-lg transition-colors duration-200 text-sm sm:text-base"
+                      >
+                    
+                        Order Now
+                      </button>
                     </div>
                   </div>
                 </div>
